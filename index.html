@@ -1,0 +1,544 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+.wrap{display:flex;justify-content:center;padding:24px 0;}
+.phone{width:375px;min-height:760px;background:#BFA8B8;border-radius:44px;border:8px solid #2C2C2A;overflow:hidden;font-family:'K2D',sans-serif;box-shadow:0 0 0 2px #444441;position:relative;}
+.notch{width:120px;height:28px;background:#2C2C2A;border-radius:0 0 18px 18px;margin:0 auto;}
+.screen{padding:8px 14px 90px;}
+.nav{background:#D4BFD0;border-radius:18px;padding:5px;display:flex;gap:4px;margin-bottom:14px;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 0;border-radius:12px;cursor:pointer;transition:background 0.15s;gap:3px;}
+.nav-btn.active{background:#F2E9E0;}
+.nav-btn svg{width:22px;height:22px;}
+.nav-label{font-size:10px;font-weight:600;color:#8A7C8D;letter-spacing:0.3px;}
+.nav-btn.active .nav-label{color:#7A6080;}
+.card{background:#F2E9E0;border-radius:18px;padding:14px;margin-bottom:12px;}
+.card-title{font-size:17px;font-weight:700;color:#8A7C8D;margin-bottom:12px;}
+.screen-view{display:none;}
+.screen-view.active{display:block;}
+.greeting-card{background:#9B7EC8;border-radius:18px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.avatar{width:46px;height:46px;border-radius:50%;background:#FFFFFF22;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.greeting-hello{font-size:12px;font-weight:400;color:#FAF7FFBB;}
+.greeting-name{font-size:19px;font-weight:700;color:#FAF7FF;line-height:1.1;}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{background:#F2E9E0;border-radius:16px;padding:12px;text-align:center;}
+.stat-label{font-size:11px;color:#8A7C8D;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;}
+.ring-wrap{position:relative;width:68px;height:68px;margin:0 auto 6px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:15px;font-weight:700;color:#8A7C8D;}
+.stat-sub{font-size:11px;color:#A898BA;margin-top:2px;}
+.month-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:12px;}
+.month-label{font-size:16px;font-weight:700;color:#8A7C8D;}
+.arrow{background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;}
+.arrow-inner{font-size:26px;font-weight:700;color:#5C5060;line-height:1;user-select:none;}
+.day-headers{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;}
+.day-h{text-align:center;font-size:11px;color:#8A7C8D;font-weight:600;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;font-size:13px;color:#8A7C8D;cursor:pointer;font-weight:500;position:relative;transition:background 0.12s;}
+.cal-cell:hover{background:#E8DDD566;}
+.cal-cell.selected{background:#9B7EC8;color:#FAF7FF;font-weight:700;}
+.cal-cell.today{background:#D4BFD0;color:#6A5070;font-weight:700;}
+.cal-cell.has-tasks::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;border-radius:2px;background:#A898BA;}
+.cal-cell.all-done::after{background:#8FBC8F;}
+.upcoming-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #E0D5CB;}
+.upcoming-row:last-child{border-bottom:none;}
+.upcoming-dot{width:8px;height:8px;border-radius:4px;background:#9B7EC8;flex-shrink:0;}
+.upcoming-dot.done{background:#8FBC8F;}
+.upcoming-text{font-size:13px;color:#8A7C8D;font-weight:500;flex:1;}
+.upcoming-date{font-size:11px;color:#A898BA;}
+.progress-card{background:#9B7EC8;border-radius:18px;padding:14px;margin-bottom:12px;}
+.progress-date{color:#FAF7FFCC;font-size:12px;margin-bottom:8px;}
+.progress-main{display:flex;align-items:center;gap:14px;}
+.progress-num{font-size:32px;font-weight:700;color:#FAF7FF;min-width:62px;text-align:center;}
+.progress-sub{font-size:11px;color:#FAF7FFBB;text-align:center;}
+.bar-bg{height:7px;background:#FFFFFF33;border-radius:4px;overflow:hidden;flex:1;margin-top:6px;}
+.bar-fill{height:100%;background:#FAF7FF;border-radius:4px;transition:width 0.4s;}
+.task-row{display:flex;align-items:center;gap:10px;background:#EDE5DB;border-radius:12px;padding:10px 11px;margin-bottom:8px;cursor:pointer;}
+.task-check{width:23px;height:23px;border-radius:50%;border:2px solid #C4B0C0;background:#F2E9E0;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:#FAF7FF;transition:all 0.15s;}
+.task-check.done{background:#8FBC8F;border-color:#8FBC8F;}
+.task-num{font-size:9px;color:#A898BA;font-weight:600;}
+.task-text{font-size:13px;color:#8A7C8D;font-weight:500;}
+.task-text.done{text-decoration:line-through;color:#B0A4B2;}
+.task-row.done-row{opacity:0.65;}
+.add-row{display:flex;gap:8px;margin-top:8px;}
+.add-input{flex:1;background:#EDE5DB;border:none;border-radius:12px;padding:10px 13px;font-size:13px;color:#8A7C8D;outline:none;font-family:'K2D',sans-serif;}
+.add-input::placeholder{color:#B0A4B2;}
+.add-btn{width:42px;height:42px;border-radius:12px;background:#9B7EC8;border:none;color:#FAF7FF;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.hint{font-size:10px;color:#B0A4B2;text-align:center;margin-top:7px;font-style:italic;}
+.overall-card{background:#F2E9E0;border-radius:18px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:16px;}
+.ov-pct{font-size:40px;font-weight:700;color:#8A7C8D;line-height:1;}
+.ov-label{font-size:10px;color:#8A7C8D;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.ov-sub{font-size:11px;color:#A898BA;margin-top:3px;}
+.tracker-row{display:flex;align-items:center;gap:10px;background:#EDE5DB;border-radius:12px;padding:10px 11px;margin-bottom:8px;}
+.tr-date{font-size:14px;color:#8A7C8D;font-weight:700;min-width:72px;}
+.tr-sub{font-size:10px;color:#A898BA;margin-top:1px;}
+.tr-pct{font-size:14px;font-weight:700;color:#8A7C8D;text-align:right;margin-bottom:3px;}
+.tr-bar-bg{height:5px;background:#D4C6C0;border-radius:3px;overflow:hidden;}
+.tr-bar-fill{height:100%;background:#C4B0C0;border-radius:3px;}
+.tr-bar-fill.full{background:#8FBC8F;}
+.mood-btn{flex:1;margin:0 3px;padding:7px 0;border-radius:10px;background:#EDE5DB;border:none;font-size:17px;cursor:pointer;transition:background 0.15s;}
+.mood-btn.active{background:#D4BFD0;}
+.mood-label{font-size:9px;color:#8A7C8D;text-align:center;margin-top:3px;}
+
+/* ── REMINDER SCREEN ── */
+.rem-header{background:#9B7EC8;border-radius:18px;padding:14px 16px;margin-bottom:12px;}
+.rem-header-title{font-size:19px;font-weight:700;color:#FAF7FF;}
+.rem-header-sub{font-size:12px;color:#FAF7FFBB;margin-top:2px;}
+
+.rem-item{background:#F2E9E0;border-radius:16px;padding:12px 14px;margin-bottom:10px;}
+.rem-item-top{display:flex;align-items:flex-start;gap:10px;}
+.rem-bell{width:34px;height:34px;border-radius:10px;background:#E8DDD5;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.rem-info{flex:1;}
+.rem-text{font-size:14px;font-weight:600;color:#7A6080;line-height:1.3;}
+.rem-meta{margin-top:5px;display:flex;flex-wrap:wrap;gap:5px;}
+.rem-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;background:#D4BFD0;color:#7A6080;}
+.rem-tag.time{background:#9B7EC833;color:#7A6080;}
+.rem-toggle{width:38px;height:22px;border-radius:11px;background:#9B7EC8;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;}
+.rem-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:8px;background:#FAF7FF;transition:left 0.2s;}
+.rem-toggle.off{background:#C4B8C4;}
+.rem-toggle.off::after{left:3px;}
+.rem-toggle.on::after{left:19px;}
+.rem-del{background:none;border:none;color:#C4B0C0;font-size:14px;cursor:pointer;padding:2px 4px;margin-top:2px;}
+
+/* ── FAB + SPEED DIAL ── */
+.fab-wrap{position:absolute;bottom:28px;right:18px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:100;}
+.fab-menu{display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity 0.25s, transform 0.25s;opacity:0;transform:translateY(12px);pointer-events:none;}
+.fab-menu.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.fab-action{display:flex;align-items:center;gap:8px;}
+.fab-label{font-size:12px;font-weight:600;color:#FAF7FF;background:#7A6080CC;backdrop-filter:blur(4px);padding:5px 11px;border-radius:20px;}
+.fab-circle{width:40px;height:40px;border-radius:20px;background:#9B7EC8;border:none;color:#FAF7FF;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px #9B7EC855;}
+.fab-main{width:50px;height:50px;border-radius:25px;background:#9B7EC8;border:none;color:#FAF7FF;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px #9B7EC877;transition:transform 0.25s, background 0.2s;}
+.fab-main.open{transform:rotate(45deg);background:#7A6080;}
+
+/* ── ADD REMINDER SHEET ── */
+.sheet-overlay{position:absolute;inset:0;background:#2C2C2A55;z-index:200;display:none;align-items:flex-end;}
+.sheet-overlay.show{display:flex;}
+.sheet{background:#F2E9E0;border-radius:24px 24px 0 0;padding:18px 16px 28px;width:100%;animation:slideUp 0.28s cubic-bezier(.4,0,.2,1);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:36px;height:4px;background:#C4B0C0;border-radius:2px;margin:0 auto 14px;}
+.sheet-title{font-size:16px;font-weight:700;color:#7A6080;margin-bottom:14px;}
+.sheet-input{width:100%;background:#EDE5DB;border:none;border-radius:12px;padding:11px 13px;font-size:14px;color:#8A7C8D;outline:none;font-family:'K2D',sans-serif;margin-bottom:12px;}
+.sheet-input::placeholder{color:#B0A4B2;}
+.sheet-section{font-size:11px;font-weight:700;color:#A898BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+.time-row{display:flex;gap:8px;margin-bottom:14px;}
+.time-input{flex:1;background:#EDE5DB;border:none;border-radius:12px;padding:10px 13px;font-size:14px;color:#8A7C8D;outline:none;font-family:'K2D',sans-serif;}
+.sched-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.sched-btn{padding:9px 0;border-radius:12px;background:#EDE5DB;border:2px solid transparent;font-size:12px;font-weight:600;color:#8A7C8D;cursor:pointer;transition:all 0.15s;font-family:'K2D',sans-serif;}
+.sched-btn.active{background:#9B7EC822;border-color:#9B7EC8;color:#7A6080;}
+.days-row{display:flex;gap:6px;margin-bottom:14px;justify-content:space-between;}
+.day-pill{width:36px;height:36px;border-radius:50%;background:#EDE5DB;border:2px solid transparent;font-size:11px;font-weight:700;color:#8A7C8D;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.day-pill.active{background:#9B7EC8;border-color:#9B7EC8;color:#FAF7FF;}
+.sheet-save{width:100%;padding:13px;border-radius:14px;background:#9B7EC8;border:none;color:#FAF7FF;font-size:15px;font-weight:700;cursor:pointer;font-family:'K2D',sans-serif;}
+.days-wrap{display:none;margin-bottom:14px;}
+.days-wrap.show{display:block;}
+</style>
+
+<div class="wrap">
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="nav">
+      <div class="nav-btn active" id="nav-home" onclick="go('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8A7C8D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        <span class="nav-label">Home</span>
+      </div>
+      <div class="nav-btn" id="nav-todo" onclick="go('todo')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8A7C8D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-5"/></svg>
+        <span class="nav-label">Tasks</span>
+      </div>
+      <div class="nav-btn" id="nav-tracker" onclick="go('tracker')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8A7C8D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="18" width="4" height="4" rx="1"/><rect x="9" y="10" width="4" height="12" rx="1"/><rect x="16" y="5" width="4" height="17" rx="1"/><line x1="2" y1="22" x2="22" y2="22"/></svg>
+        <span class="nav-label">Tracker</span>
+      </div>
+0 01-3.46 0"/></svg>
+        <span class="nav-label">Reminder</span>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen-view active" id="screen-home">
+      <div class="greeting-card">
+        <div class="avatar">🌸</div>
+        <div>
+          <div class="greeting-hello">Good morning,</div>
+          <div class="greeting-name">My Planner ✨</div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Today</div>
+          <div class="ring-wrap">
+            <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="27" fill="none" stroke="#E0D5CB" stroke-width="6"/><circle id="today-circle" cx="34" cy="34" r="27" fill="none" stroke="#9B7EC8" stroke-width="6" stroke-dasharray="169.6" stroke-dashoffset="56" stroke-linecap="round"/></svg>
+            <div class="ring-center" id="today-ring-pct">67%</div>
+          </div>
+          <div class="stat-sub" id="today-stat-sub">2 of 3 done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">All time</div>
+          <div class="ring-wrap">
+            <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="27" fill="none" stroke="#E0D5CB" stroke-width="6"/><circle id="week-circle" cx="34" cy="34" r="27" fill="none" stroke="#8FBC8F" stroke-width="6" stroke-dasharray="169.6" stroke-dashoffset="85" stroke-linecap="round"/></svg>
+            <div class="ring-center" id="week-ring-pct">50%</div>
+          </div>
+          <div class="stat-sub" id="week-stat-sub">3 of 6 done</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">My Calendar</div>
+        <div class="month-nav">
+          <button class="arrow" onclick="prevMonth()"><span class="arrow-inner">‹</span></button>
+          <span class="month-label" id="month-label"></span>
+          <button class="arrow" onclick="nextMonth()"><span class="arrow-inner">›</span></button>
+        </div>
+        <div class="day-headers">
+          <div class="day-h">Mo</div><div class="day-h">Tu</div><div class="day-h">We</div>
+          <div class="day-h">Th</div><div class="day-h">Fr</div><div class="day-h">Sa</div><div class="day-h">Su</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Upcoming tasks</div>
+        <div id="upcoming-list"></div>
+      </div>
+    </div>
+
+    <!-- TODO -->
+    <div class="screen-view" id="screen-todo">
+      <div class="progress-card">
+        <div class="progress-date" id="todo-date"></div>
+        <div class="progress-main">
+          <div>
+            <div class="progress-num" id="todo-pct">0%</div>
+            <div class="progress-sub" id="todo-sub">0 of 0</div>
+          </div>
+          <div style="flex:1"><div class="bar-bg"><div class="bar-fill" id="todo-bar" style="width:0%"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">To-Do</div>
+        <div id="task-list"></div>
+        <div class="add-row">
+          <input class="add-input" id="task-input" placeholder="Add a new task…" onkeydown="if(event.key==='Enter')addTask()"/>
+          <button class="add-btn" onclick="addTask()">+</button>
+        </div>
+        <div class="hint">Tap to complete • ✕ to delete</div>
+      </div>
+    </div>
+
+    <!-- TRACKER -->
+    <div class="screen-view" id="screen-tracker">
+      <div class="overall-card">
+        <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg);flex-shrink:0">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#E0D5CB" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#9B7EC8" stroke-width="7" stroke-dasharray="201" id="ov-ring-circle" stroke-dashoffset="101" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="ov-label">Overall Progress</div>
+          <div class="ov-pct" id="ov-pct">0%</div>
+          <div class="ov-sub" id="ov-sub">0 of 0 done</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Mood today</div>
+        <div style="display:flex;margin-bottom:4px">
+          <div style="flex:1;text-align:center"><button class="mood-btn" onclick="setMood(0)">😴</button><div class="mood-label">Tired</div></div>
+          <div style="flex:1;text-align:center"><button class="mood-btn" onclick="setMood(1)">😊</button><div class="mood-label">Good</div></div>
+          <div style="flex:1;text-align:center"><button class="mood-btn" onclick="setMood(2)">🔥</button><div class="mood-label">Productive</div></div>
+          <div style="flex:1;text-align:center"><button class="mood-btn" onclick="setMood(3)">😌</button><div class="mood-label">Calm</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">By Day</div>
+        <div id="tracker-list"></div>
+      </div>
+    </div>
+
+    <!-- REMINDER -->
+    <div class="screen-view" id="screen-reminder">
+      <div class="rem-header">
+        <div class="rem-header-title">Reminders 🔔</div>
+        <div class="rem-header-sub" id="rem-count">No reminders yet</div>
+      </div>
+      <div id="rem-list"></div>
+      <div id="rem-empty" style="color:#B0A4B2;font-size:13px;text-align:center;padding:20px 0;font-style:italic">Press + to add your first reminder 🌸</div>
+    </div>
+  </div>
+
+  <!-- FAB — only shows on reminder screen -->
+  <div class="fab-wrap" id="fab-wrap" style="display:none;">
+    <div class="fab-menu" id="fab-menu">
+      <div class="fab-action">
+        <span class="fab-label">Add</span>
+        <button class="fab-circle" onclick="openSheet()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FAF7FF" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="fab-main" id="fab-main" onclick="toggleFab()">+</button>
+  </div>
+
+  <!-- ADD REMINDER SHEET -->
+  <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheetOutside(event)">
+    <div class="sheet" id="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">New Reminder</div>
+
+      <input class="sheet-input" id="rem-text-input" placeholder="What do you want to be reminded of?"/>
+
+      <div class="sheet-section">Time</div>
+      <div class="time-row">
+        <input class="time-input" type="time" id="rem-time-input" value="09:00"/>
+      </div>
+
+      <div class="sheet-section">Schedule</div>
+      <div class="sched-grid">
+        <button class="sched-btn active" id="sched-every" onclick="setSched('every')">Every day</button>
+        <button class="sched-btn" id="sched-even"  onclick="setSched('even')">Even days</button>
+        <button class="sched-btn" id="sched-odd"   onclick="setSched('odd')">Odd days</button>
+        <button class="sched-btn" id="sched-week"  onclick="setSched('week')">By weekday</button>
+      </div>
+
+      <div class="days-wrap" id="days-wrap">
+        <div class="sheet-section">Days of the week</div>
+        <div class="days-row">
+          <div class="day-pill" id="dp-1" onclick="toggleDay(1)">Mo</div>
+          <div class="day-pill" id="dp-2" onclick="toggleDay(2)">Tu</div>
+          <div class="day-pill" id="dp-3" onclick="toggleDay(3)">We</div>
+          <div class="day-pill" id="dp-4" onclick="toggleDay(4)">Th</div>
+          <div class="day-pill" id="dp-5" onclick="toggleDay(5)">Fr</div>
+          <div class="day-pill" id="dp-6" onclick="toggleDay(6)">Sa</div>
+          <div class="day-pill" id="dp-0" onclick="toggleDay(0)">Su</div>
+        </div>
+      </div>
+
+      <button class="sheet-save" onclick="saveReminder()">Save Reminder</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const today=new Date();
+let calYear=today.getFullYear(),calMonth=today.getMonth();
+let selectedDate=dkey(today.getFullYear(),today.getMonth(),today.getDate());
+let tasks={};
+let reminders=[];
+let currentSched='every';
+let selectedDays=new Set();
+let fabOpen=false;
+
+function dkey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+function todayKey(){return dkey(today.getFullYear(),today.getMonth(),today.getDate());}
+function fmtDate(k){const[y,m,d]=k.split('-');return MONTHS[parseInt(m)-1]+' '+parseInt(d)+', '+y;}
+
+function go(name){
+  document.querySelectorAll('.screen-view').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  // show/hide FAB
+  document.getElementById('fab-wrap').style.display = name==='reminder'?'flex':'none';
+  if(fabOpen){closeFab();}
+  if(name==='home'){renderCal();renderUpcoming();updateHomeStats();}
+  if(name==='todo')renderTodo();
+  if(name==='tracker')renderTracker();
+  if(name==='reminder')renderReminders();
+}
+
+// ── CALENDAR ──
+function renderCal(){
+  document.getElementById('month-label').textContent=MONTHS[calMonth]+' '+calYear;
+  const grid=document.getElementById('cal-grid');grid.innerHTML='';
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  let fd=new Date(calYear,calMonth,1).getDay();fd=fd===0?6:fd-1;
+  for(let i=0;i<fd;i++){const e=document.createElement('div');e.className='cal-cell';grid.appendChild(e);}
+  for(let d=1;d<=dim;d++){
+    const k=dkey(calYear,calMonth,d);
+    const el=document.createElement('div');el.className='cal-cell';
+    if(k===selectedDate)el.classList.add('selected');
+    else if(k===todayKey())el.classList.add('today');
+    const list=tasks[k]||[];
+    if(list.length>0){el.classList.add('has-tasks');if(list.every(t=>t.done))el.classList.add('all-done');}
+    el.textContent=d;el.onclick=()=>{selectedDate=k;go('todo');};
+    grid.appendChild(el);
+  }
+}
+function renderUpcoming(){
+  const ul=document.getElementById('upcoming-list');ul.innerHTML='';
+  const entries=Object.entries(tasks).filter(([,l])=>l.length>0).sort(([a],[b])=>a.localeCompare(b)).slice(0,4);
+  if(entries.length===0){ul.innerHTML='<div style="color:#B0A4B2;font-size:13px;text-align:center;padding:8px;font-style:italic">No upcoming tasks 🌸</div>';return;}
+  entries.forEach(([k,list])=>{list.slice(0,2).forEach(t=>{
+    const row=document.createElement('div');row.className='upcoming-row';
+    const[,m,d]=k.split('-');
+    row.innerHTML=`<div class="upcoming-dot ${t.done?'done':''}"></div><div class="upcoming-text">${t.text}</div><div class="upcoming-date">${MONTHS[parseInt(m)-1].slice(0,3)} ${parseInt(d)}</div>`;
+    ul.appendChild(row);
+  });});
+}
+function updateHomeStats(){
+  const tk=todayKey(),tList=tasks[tk]||[];
+  const tTotal=tList.length,tDone=tList.filter(x=>x.done).length;
+  const tPct=tTotal===0?0:Math.round(tDone/tTotal*100);
+  document.getElementById('today-ring-pct').textContent=tPct+'%';
+  document.getElementById('today-stat-sub').textContent=tDone+' of '+tTotal+' done';
+  const c=169.6;
+  document.getElementById('today-circle').setAttribute('stroke-dashoffset',c-(c*tPct/100));
+  const allT=Object.values(tasks).flat();
+  const wTotal=allT.length,wDone=allT.filter(x=>x.done).length;
+  const wPct=wTotal===0?0:Math.round(wDone/wTotal*100);
+  document.getElementById('week-ring-pct').textContent=wPct+'%';
+  document.getElementById('week-stat-sub').textContent=wDone+' of '+wTotal+' done';
+  document.getElementById('week-circle').setAttribute('stroke-dashoffset',c-(c*wPct/100));
+}
+
+// ── TODO ──
+function renderTodo(){
+  document.getElementById('todo-date').textContent=fmtDate(selectedDate);
+  const list=tasks[selectedDate]||[];
+  const total=list.length,done=list.filter(t=>t.done).length;
+  const pct=total===0?0:Math.round(done/total*100);
+  document.getElementById('todo-pct').textContent=pct+'%';
+  document.getElementById('todo-sub').textContent=done+' of '+total+' done';
+  document.getElementById('todo-bar').style.width=pct+'%';
+  const c=document.getElementById('task-list');c.innerHTML='';
+  if(list.length===0){c.innerHTML='<div style="color:#B0A4B2;font-size:13px;text-align:center;padding:10px 0;font-style:italic">No tasks yet. Add one! 🌸</div>';return;}
+  list.forEach((task,idx)=>{
+    const row=document.createElement('div');row.className='task-row'+(task.done?' done-row':'');
+    row.innerHTML=`<div class="task-check ${task.done?'done':''}" onclick="toggleTask('${task.id}')">${task.done?'✓':''}</div><div style="flex:1" onclick="toggleTask('${task.id}')"><div class="task-num">${idx+1}</div><div class="task-text ${task.done?'done':''}">${task.text}</div></div><div onclick="delTask('${task.id}')" style="color:#B0A4B2;font-size:15px;padding:0 3px;cursor:pointer">✕</div>`;
+    c.appendChild(row);
+  });
+}
+function addTask(){
+  const inp=document.getElementById('task-input');const text=inp.value.trim();if(!text)return;
+  if(!tasks[selectedDate])tasks[selectedDate]=[];
+  tasks[selectedDate].push({id:Date.now().toString(),text,done:false});
+  inp.value='';renderTodo();renderCal();
+}
+function toggleTask(id){const list=tasks[selectedDate]||[];const t=list.find(x=>x.id===id);if(t)t.done=!t.done;renderTodo();renderCal();}
+function delTask(id){if(!tasks[selectedDate])return;tasks[selectedDate]=tasks[selectedDate].filter(x=>x.id!==id);renderTodo();renderCal();}
+
+// ── TRACKER ──
+function renderTracker(){
+  const entries=Object.entries(tasks).filter(([,l])=>l.length>0).sort(([a],[b])=>b.localeCompare(a));
+  const ovT=entries.reduce((s,[,l])=>s+l.length,0);
+  const ovD=entries.reduce((s,[,l])=>s+l.filter(t=>t.done).length,0);
+  const ovP=ovT===0?0:Math.round(ovD/ovT*100);
+  document.getElementById('ov-pct').textContent=ovP+'%';
+  document.getElementById('ov-sub').textContent=ovD+' of '+ovT+' done';
+  document.getElementById('ov-ring-circle').setAttribute('stroke-dashoffset',201-(201*ovP/100));
+  const c=document.getElementById('tracker-list');c.innerHTML='';
+  if(entries.length===0){c.innerHTML='<div style="color:#B0A4B2;font-size:13px;text-align:center;padding:10px 0;font-style:italic">No data yet 📅</div>';return;}
+  entries.forEach(([k,list])=>{
+    const t=list.length,d=list.filter(x=>x.done).length,p=Math.round(d/t*100);
+    const[,m,day]=k.split('-');
+    const row=document.createElement('div');row.className='tracker-row';
+    row.innerHTML=`<div><div class="tr-date">${MONTHS[parseInt(m)-1].slice(0,3)} ${parseInt(day)}</div><div class="tr-sub">${d}/${t} done</div></div><div style="flex:1"><div class="tr-pct">${p}%</div><div class="tr-bar-bg"><div class="tr-bar-fill ${p===100?'full':''}" style="width:${p}%"></div></div></div>`;
+    c.appendChild(row);
+  });
+}
+function setMood(i){document.querySelectorAll('.mood-btn').forEach((b,idx)=>b.classList.toggle('active',idx===i));}
+function prevMonth(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;renderCal();}
+function nextMonth(){if(calMonth===11){calMonth=0;calYear++;}else calMonth++;renderCal();}
+
+// ── REMINDER ──
+function schedLabel(r){
+  if(r.sched==='every') return 'Every day';
+  if(r.sched==='even')  return 'Even days';
+  if(r.sched==='odd')   return 'Odd days';
+  if(r.sched==='week'){
+    const names=['Su','Mo','Tu','We','Th','Fr','Sa'];
+    return [...r.days].map(d=>names[d]).join(', ') || 'No days';
+  }
+  return '';
+}
+function renderReminders(){
+  const list=document.getElementById('rem-list');
+  const empty=document.getElementById('rem-empty');
+  const cnt=document.getElementById('rem-count');
+  list.innerHTML='';
+  if(reminders.length===0){empty.style.display='block';cnt.textContent='No reminders yet';return;}
+  empty.style.display='none';
+  cnt.textContent=reminders.length+' reminder'+(reminders.length>1?'s':'');
+  reminders.forEach((r,idx)=>{
+    const item=document.createElement('div');item.className='rem-item';
+    item.innerHTML=`
+      <div class="rem-item-top">
+        <div class="rem-bell">🔔</div>
+        <div class="rem-info">
+          <div class="rem-text">${r.text}</div>
+          <div class="rem-meta">
+            <span class="rem-tag time">⏰ ${r.time}</span>
+            <span class="rem-tag">${schedLabel(r)}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <button class="rem-toggle ${r.on?'on':'off'}" onclick="toggleRem(${idx})"></button>
+          <button class="rem-del" onclick="delRem(${idx})">✕</button>
+        </div>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+function toggleRem(idx){reminders[idx].on=!reminders[idx].on;renderReminders();}
+function delRem(idx){reminders.splice(idx,1);renderReminders();}
+
+// ── FAB ──
+function toggleFab(){fabOpen?closeFab():openFab();}
+function openFab(){
+  fabOpen=true;
+  document.getElementById('fab-menu').classList.add('open');
+  document.getElementById('fab-main').classList.add('open');
+}
+function closeFab(){
+  fabOpen=false;
+  document.getElementById('fab-menu').classList.remove('open');
+  document.getElementById('fab-main').classList.remove('open');
+}
+
+// ── SHEET ──
+function openSheet(){
+  closeFab();
+  // reset form
+  document.getElementById('rem-text-input').value='';
+  document.getElementById('rem-time-input').value='09:00';
+  setSched('every');
+  selectedDays=new Set();
+  document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
+  document.getElementById('sheet-overlay').classList.add('show');
+}
+function closeSheet(){document.getElementById('sheet-overlay').classList.remove('show');}
+function closeSheetOutside(e){if(e.target===document.getElementById('sheet-overlay'))closeSheet();}
+
+function setSched(s){
+  currentSched=s;
+  ['every','even','odd','week'].forEach(k=>{
+    document.getElementById('sched-'+k).classList.toggle('active',k===s);
+  });
+  document.getElementById('days-wrap').classList.toggle('show',s==='week');
+}
+function toggleDay(d){
+  if(selectedDays.has(d))selectedDays.delete(d);else selectedDays.add(d);
+  document.getElementById('dp-'+d).classList.toggle('active',selectedDays.has(d));
+}
+function saveReminder(){
+  const text=document.getElementById('rem-text-input').value.trim();
+  if(!text)return;
+  const time=document.getElementById('rem-time-input').value||'09:00';
+  reminders.push({
+    id:Date.now().toString(),
+    text,time,
+    sched:currentSched,
+    days:new Set(selectedDays),
+    on:true
+  });
+  closeSheet();
+  renderReminders();
+}
+
+// ── INIT ──
+tasks[todayKey()]=[{id:'1',text:'Morning workout 🏃',done:true},{id:'2',text:'Read 30 pages',done:true},{id:'3',text:'Call mom',done:false}];
+const y=today.getFullYear(),m=today.getMonth();
+tasks[dkey(y,m,today.getDate()+1)]=[{id:'4',text:'Grocery shopping',done:false},{id:'5',text:'Yoga class',done:false}];
+tasks[dkey(y,m,today.getDate()-1)]=[{id:'6',text:'Weekly review',done:true},{id:'7',text:'Plan the week',done:true}];
+go('home');
+</script>
